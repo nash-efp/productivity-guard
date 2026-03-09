@@ -1,0 +1,228 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 13px;
+  width: 300px;
+  background: #1a1a2e;
+  color: #e0e0e0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #16213e;
+  border-bottom: 1px solid #0f3460;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #e94560;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.stats-link {
+  font-size: 12px;
+  color: #a0a8c0;
+  text-decoration: none;
+}
+
+.stats-link:hover {
+  color: #e94560;
+}
+
+/* Master toggle (iOS-style switch) */
+.master-toggle {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.master-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.master-slider {
+  position: absolute;
+  inset: 0;
+  background: #4a5568;
+  border-radius: 20px;
+  transition: background 0.2s;
+}
+
+.master-slider::before {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  left: 3px;
+  top: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.master-toggle input:checked + .master-slider {
+  background: #4caf50;
+}
+
+.master-toggle input:checked + .master-slider::before {
+  transform: translateX(16px);
+}
+
+/* Disabled state overlay */
+body.extension-off .section {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.section {
+  padding: 12px 16px;
+  border-bottom: 1px solid #0f3460;
+}
+
+.section:last-child {
+  border-bottom: none;
+}
+
+.site-row {
+  margin-bottom: 10px;
+}
+
+.site-row:last-child {
+  margin-bottom: 0;
+}
+
+.site-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c0c8e0;
+  margin-bottom: 4px;
+}
+
+.progress-wrap {
+  height: 8px;
+  background: #0f3460;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 3px;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  border-radius: 4px;
+  transition: width 0.3s ease, background-color 0.3s ease;
+  background: #4caf50;
+}
+
+.progress-bar.yellow { background: #ffc107; }
+.progress-bar.orange { background: #ff9800; }
+.progress-bar.red    { background: #e94560; }
+
+.usage-label {
+  font-size: 11px;
+  color: #8090b0;
+}
+
+.bypass-label {
+  font-size: 11px;
+  color: #ffc107;
+  margin-top: 2px;
+}
+
+.settings-section .section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #a0a8c0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.setting-label {
+  flex: 1;
+  font-size: 12px;
+  color: #c0c8e0;
+}
+
+.limit-input {
+  width: 52px;
+  padding: 4px 6px;
+  background: #0f3460;
+  border: 1px solid #1a4080;
+  border-radius: 4px;
+  color: #e0e0e0;
+  font-size: 12px;
+  text-align: center;
+}
+
+.limit-input:focus {
+  outline: none;
+  border-color: #e94560;
+}
+
+.unit {
+  font-size: 11px;
+  color: #8090b0;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #a0a8c0;
+  cursor: pointer;
+}
+
+.toggle-label input[type="checkbox"] {
+  cursor: pointer;
+  accent-color: #e94560;
+}
+
+.save-btn {
+  margin-top: 4px;
+  padding: 6px 16px;
+  background: #e94560;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.save-btn:hover {
+  background: #c73652;
+}
+
+.save-msg {
+  font-size: 11px;
+  color: #4caf50;
+  margin-left: 8px;
+}

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>時間制限 - Productivity Guard</title>
+  <link rel="stylesheet" href="blocked.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="icon">⛔</div>
+    <h1 class="title">時間制限に達しました</h1>
+    <p class="site-name" id="site-name"></p>
+    <p class="message">今日の利用上限に達しました。<br>別のことをしましょう！</p>
+
+    <div class="usage-info" id="usage-info"></div>
+
+    <div class="actions">
+      <button id="bypass-btn" class="bypass-btn">今は見てもいい (+5分)</button>
+      <div id="countdown" class="countdown" style="display:none;"></div>
+    </div>
+
+    <p class="hint">設定を変更するには拡張機能のアイコンをクリックしてください</p>
+  </div>
+
+  <script src="blocked.js"></script>
+</body>
+</html>

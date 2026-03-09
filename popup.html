@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>Productivity Guard</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="header">
+    <span class="title">Productivity Guard</span>
+    <div class="header-right">
+      <label class="master-toggle" title="拡張機能のオン/オフ">
+        <input type="checkbox" id="master-enabled" checked />
+        <span class="master-slider"></span>
+      </label>
+      <a href="stats.html" target="_blank" class="stats-link">統計 &rsaquo;</a>
+    </div>
+  </div>
+
+  <div class="section" id="main-section">
+    <div class="site-row" id="youtube-status">
+      <div class="site-name">YouTube</div>
+      <div class="progress-wrap">
+        <div class="progress-bar" id="youtube-bar"></div>
+      </div>
+      <div class="usage-label" id="youtube-label">--m / --m</div>
+      <div class="bypass-label" id="youtube-bypass" style="display:none;"></div>
+    </div>
+
+    <div class="site-row" id="twitter-status">
+      <div class="site-name">Twitter / X</div>
+      <div class="progress-wrap">
+        <div class="progress-bar" id="twitter-bar"></div>
+      </div>
+      <div class="usage-label" id="twitter-label">--m / --m</div>
+      <div class="bypass-label" id="twitter-bypass" style="display:none;"></div>
+    </div>
+  </div>
+
+  <div class="section settings-section">
+    <div class="section-title">Settings</div>
+
+    <div class="setting-row">
+      <label class="setting-label">YouTube上限</label>
+      <input type="number" id="youtube-limit" min="1" max="1440" class="limit-input" />
+      <span class="unit">min</span>
+      <label class="toggle-label">
+        <input type="checkbox" id="youtube-enabled" />
+        有効
+      </label>
+    </div>
+
+    <div class="setting-row">
+      <label class="setting-label">Twitter上限</label>
+      <input type="number" id="twitter-limit" min="1" max="1440" class="limit-input" />
+      <span class="unit">min</span>
+      <label class="toggle-label">
+        <input type="checkbox" id="twitter-enabled" />
+        有効
+      </label>
+    </div>
+
+    <div class="setting-row">
+      <label class="setting-label">開く前に確認</label>
+      <label class="toggle-label">
+        <input type="checkbox" id="confirm-enabled" />
+        有効
+      </label>
+    </div>
+
+    <button id="save-btn" class="save-btn">保存</button>
+    <span id="save-msg" class="save-msg"></span>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
