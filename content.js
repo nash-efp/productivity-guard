@@ -20,6 +20,7 @@
     // confirmation is not required).
 
     let mediaObserver = null;
+    const mutedByUs = new WeakSet(); // track only elements we muted ourselves
 
     function blockPageContent() {
       // 1. Hide all page content visually while keeping our overlay visible.
@@ -32,6 +33,8 @@
 
       // 2. Override HTMLMediaElement.prototype.play in the *page* context so
       //    autoplay calls are swallowed while the overlay is showing.
+      //    Note: blocked by strict CSP on some sites, but the MutationObserver
+      //    below acts as a fallback in those cases.
       const script = document.createElement("script");
       script.textContent = `
         window.__pgBlocking = true;
@@ -47,10 +50,14 @@
       script.remove(); // tag can be removed after execution
 
       // 3. MutationObserver: pause any media element added while blocking.
+      //    Only mute elements that are not already muted by the page itself.
       mediaObserver = new MutationObserver(function () {
         document.querySelectorAll("video, audio").forEach(function (el) {
           if (!el.paused) el.pause();
-          el.muted = true;
+          if (!el.muted) {
+            el.muted = true;
+            mutedByUs.add(el);
+          }
         });
       });
       mediaObserver.observe(document.documentElement, {
@@ -76,9 +83,9 @@
       document.documentElement.appendChild(script);
       script.remove();
 
-      // Unmute any media elements that were muted by the observer.
+      // Only unmute elements that we muted — leave originally-muted ones alone.
       document.querySelectorAll("video, audio").forEach(function (el) {
-        el.muted = false;
+        if (mutedByUs.has(el)) el.muted = false;
       });
     }
 
