@@ -1,5 +1,14 @@
 // stats.js
 
+const SITE_NAMES = {
+  "youtube.com": "YouTube",
+  "twitter.com": "Twitter / X"
+};
+
+function getSiteName(hostname) {
+  return SITE_NAMES[hostname] || hostname;
+}
+
 let currentPeriod = 7;
 
 function getTodayKey() {
@@ -42,11 +51,11 @@ function getBarColor(seconds, limitSeconds) {
 
 function renderChart(containerId, site, usage, settings, days) {
   const container = document.getElementById(containerId);
+  if (!container) return;
   container.innerHTML = "";
 
   const limitSec = (settings[site]?.limitMinutes || 20) * 60;
 
-  // Collect data for the period
   const entries = [];
   let maxSeconds = limitSec;
   for (let i = days - 1; i >= 0; i--) {
@@ -56,7 +65,6 @@ function renderChart(containerId, site, usage, settings, days) {
     if (sec > maxSeconds) maxSeconds = sec;
   }
 
-  // Check if all zero
   const hasData = entries.some(e => e.sec > 0);
   if (!hasData) {
     const empty = document.createElement("div");
@@ -84,7 +92,6 @@ function renderChart(containerId, site, usage, settings, days) {
     const pct = Math.min((entry.sec / maxSeconds) * 100, 100);
     barFill.style.width = `${pct}%`;
 
-    // Limit line
     const limitLine = document.createElement("div");
     limitLine.className = "limit-line";
     limitLine.style.left = `${Math.min(limitPct, 100)}%`;
@@ -104,13 +111,27 @@ function renderChart(containerId, site, usage, settings, days) {
   }
 }
 
-function renderSummary(usage, settings, days) {
-  const sites = { "youtube.com": "YouTube", "twitter.com": "Twitter / X" };
+function renderCharts(allSites, usage, settings, days) {
+  const container = document.getElementById("charts-container");
+  container.innerHTML = allSites.map(site => `
+    <div class="chart-section">
+      <h2 class="chart-title">${getSiteName(site)}</h2>
+      <div id="chart-${site.replace(/\./g, "-")}" class="chart"></div>
+    </div>
+  `).join("");
+
+  for (const site of allSites) {
+    renderChart(`chart-${site.replace(/\./g, "-")}`, site, usage, settings, days);
+  }
+}
+
+function renderSummary(allSites, usage, settings, days) {
   const summaryEl = document.getElementById("summary");
 
   let html = '<div class="summary-title">集計</div><div class="summary-grid">';
 
-  for (const [site, name] of Object.entries(sites)) {
+  for (const site of allSites) {
+    const name = getSiteName(site);
     let totalSec = 0;
     let exceedDays = 0;
     const limitSec = (settings[site]?.limitMinutes || 20) * 60;
@@ -146,9 +167,11 @@ async function loadAndRender() {
     if (!usage) usage = {};
     chrome.runtime.sendMessage({ type: "getSettingsOnly" }, (settings) => {
       if (!settings) settings = {};
-      renderChart("youtube-chart", "youtube.com", usage, settings, currentPeriod);
-      renderChart("twitter-chart", "twitter.com", usage, settings, currentPeriod);
-      renderSummary(usage, settings, currentPeriod);
+      chrome.runtime.sendMessage({ type: "getCustomSites" }, (customSites) => {
+        const allSites = ["youtube.com", "twitter.com", ...(customSites || [])];
+        renderCharts(allSites, usage, settings, currentPeriod);
+        renderSummary(allSites, usage, settings, currentPeriod);
+      });
     });
   });
 }

@@ -18,48 +18,14 @@
   </div>
 
   <div class="section" id="main-section">
-    <div class="site-row" id="youtube-status">
-      <div class="site-name">YouTube</div>
-      <div class="progress-wrap">
-        <div class="progress-bar" id="youtube-bar"></div>
-      </div>
-      <div class="usage-label" id="youtube-label">--m / --m</div>
-      <div class="bypass-label" id="youtube-bypass" style="display:none;"></div>
-    </div>
-
-    <div class="site-row" id="twitter-status">
-      <div class="site-name">Twitter / X</div>
-      <div class="progress-wrap">
-        <div class="progress-bar" id="twitter-bar"></div>
-      </div>
-      <div class="usage-label" id="twitter-label">--m / --m</div>
-      <div class="bypass-label" id="twitter-bypass" style="display:none;"></div>
-    </div>
+    <!-- Dynamically populated by popup.js -->
   </div>
 
   <div class="section settings-section">
     <div class="section-title">Settings</div>
-
-    <div class="setting-row">
-      <label class="setting-label">YouTube上限</label>
-      <input type="number" id="youtube-limit" min="1" max="1440" class="limit-input" />
-      <span class="unit">min</span>
-      <label class="toggle-label">
-        <input type="checkbox" id="youtube-enabled" />
-        有効
-      </label>
+    <div id="settings-rows">
+      <!-- Dynamically populated by popup.js -->
     </div>
-
-    <div class="setting-row">
-      <label class="setting-label">Twitter上限</label>
-      <input type="number" id="twitter-limit" min="1" max="1440" class="limit-input" />
-      <span class="unit">min</span>
-      <label class="toggle-label">
-        <input type="checkbox" id="twitter-enabled" />
-        有効
-      </label>
-    </div>
-
     <div class="setting-row">
       <label class="setting-label">開く前に確認</label>
       <label class="toggle-label">
@@ -67,9 +33,22 @@
         有効
       </label>
     </div>
-
     <button id="save-btn" class="save-btn">保存</button>
     <span id="save-msg" class="save-msg"></span>
+  </div>
+
+  <div class="section add-site-section">
+    <div class="section-title">サイト管理</div>
+    <div class="add-site-row">
+      <input type="text" id="new-site-url" placeholder="例: instagram.com" class="url-input" />
+      <input type="number" id="new-site-limit" value="20" min="1" max="1440" class="limit-input" />
+      <span class="unit">min</span>
+      <button id="add-site-btn" class="add-btn">追加</button>
+    </div>
+    <div id="custom-sites-list">
+      <!-- Dynamically populated by popup.js -->
+    </div>
+    <div id="add-site-error" class="add-site-error"></div>
   </div>
 
   <script src="popup.js"></script>

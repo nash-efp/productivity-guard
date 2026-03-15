@@ -226,3 +226,111 @@ body.extension-off .section {
   color: #4caf50;
   margin-left: 8px;
 }
+
+/* Custom site management */
+.add-site-section .section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #a0a8c0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+
+.add-site-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.url-input {
+  flex: 1;
+  min-width: 0;
+  padding: 4px 6px;
+  background: #0f3460;
+  border: 1px solid #1a4080;
+  border-radius: 4px;
+  color: #e0e0e0;
+  font-size: 12px;
+}
+
+.url-input:focus {
+  outline: none;
+  border-color: #e94560;
+}
+
+.url-input::placeholder {
+  color: #4a5568;
+}
+
+.add-btn {
+  padding: 4px 10px;
+  background: #e94560;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.add-btn:hover {
+  background: #c73652;
+}
+
+.add-site-error {
+  font-size: 11px;
+  color: #e94560;
+  min-height: 14px;
+  margin-bottom: 4px;
+}
+
+.custom-site-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px solid #0f3460;
+}
+
+.custom-site-item:last-child {
+  border-bottom: none;
+}
+
+.custom-site-name {
+  font-size: 12px;
+  color: #c0c8e0;
+  word-break: break-all;
+}
+
+.delete-site-btn {
+  padding: 2px 8px;
+  background: transparent;
+  border: 1px solid #4a5568;
+  border-radius: 4px;
+  color: #a0a8c0;
+  font-size: 11px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.delete-site-btn:hover {
+  border-color: #e94560;
+  color: #e94560;
+}
+
+.no-custom-sites {
+  font-size: 11px;
+  color: #4a5568;
+  padding: 4px 0;
+}
+
+.no-sites {
+  font-size: 12px;
+  color: #4a5568;
+  padding: 4px 0;
+}

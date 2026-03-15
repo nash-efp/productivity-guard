@@ -5,20 +5,14 @@
   "description": "YouTube・Twitterの利用時間を制限するChrome拡張機能",
   "permissions": ["storage", "alarms", "tabs"],
   "host_permissions": [
-    "*://*.youtube.com/*",
-    "*://*.twitter.com/*",
-    "*://*.x.com/*"
+    "<all_urls>"
   ],
   "background": {
     "service_worker": "background.js"
   },
   "content_scripts": [
     {
-      "matches": [
-        "*://*.youtube.com/*",
-        "*://*.twitter.com/*",
-        "*://*.x.com/*"
-      ],
+      "matches": ["<all_urls>"],
       "js": ["content.js"],
       "run_at": "document_start"
     }
