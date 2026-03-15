@@ -1,18 +1,29 @@
 // background.js - Service Worker
 
-const SITES = ["youtube.com", "twitter.com"];
+const DEFAULT_SITES = ["youtube.com", "twitter.com"];
 const BYPASS_DURATION_MS = 5 * 60 * 1000; // 5 minutes
 const KEEP_DAYS = 30;
 
-function normalizeHost(hostname) {
+async function getCustomSites() {
+  const data = await chrome.storage.local.get("customSites");
+  return data.customSites || [];
+}
+
+async function getAllSites() {
+  const customSites = await getCustomSites();
+  return [...DEFAULT_SITES, ...customSites];
+}
+
+async function normalizeHost(hostname) {
   if (!hostname) return null;
   hostname = hostname.toLowerCase();
-  if (hostname === "x.com" || hostname.endsWith(".x.com") ||
-      hostname === "twitter.com" || hostname.endsWith(".twitter.com")) {
-    return "twitter.com";
-  }
-  if (hostname === "youtube.com" || hostname.endsWith(".youtube.com")) {
-    return "youtube.com";
+
+  // Twitter/X alias
+  if (hostname === "x.com" || hostname.endsWith(".x.com")) return "twitter.com";
+
+  const allSites = await getAllSites();
+  for (const site of allSites) {
+    if (hostname === site || hostname.endsWith("." + site)) return site;
   }
   return null;
 }
@@ -25,16 +36,14 @@ function getTodayKey() {
   return `${y}-${m}-${d}`;
 }
 
-function getDefaultSettings() {
-  return {
-    "youtube.com": { limitMinutes: 20, enabled: true },
-    "twitter.com": { limitMinutes: 20, enabled: true }
-  };
-}
-
 async function getSettings() {
   const data = await chrome.storage.local.get("settings");
-  return data.settings || getDefaultSettings();
+  const settings = data.settings || {};
+  // Ensure default sites always have settings
+  for (const site of DEFAULT_SITES) {
+    if (!settings[site]) settings[site] = { limitMinutes: 20, enabled: true };
+  }
+  return settings;
 }
 
 async function isMasterEnabled() {
@@ -107,7 +116,6 @@ async function checkAndBlock(site, tabId) {
   const limitSeconds = siteSetting.limitMinutes * 60;
 
   if (usedSeconds >= limitSeconds) {
-    // Get the current tab URL to pass as redirect param
     try {
       const tab = await chrome.tabs.get(tabId);
       const originalUrl = encodeURIComponent(tab.url || "");
@@ -121,29 +129,65 @@ async function checkAndBlock(site, tabId) {
   }
 }
 
+async function addCustomSite(hostname, limitMinutes) {
+  const customSites = await getCustomSites();
+  if (!customSites.includes(hostname)) {
+    customSites.push(hostname);
+    await chrome.storage.local.set({ customSites });
+  }
+  const settings = await getSettings();
+  if (!settings[hostname]) {
+    settings[hostname] = { limitMinutes: limitMinutes || 20, enabled: true };
+    await chrome.storage.local.set({ settings });
+  }
+}
+
+async function removeCustomSite(hostname) {
+  const customSites = await getCustomSites();
+  const idx = customSites.indexOf(hostname);
+  if (idx >= 0) {
+    customSites.splice(idx, 1);
+    await chrome.storage.local.set({ customSites });
+  }
+  const data = await chrome.storage.local.get("settings");
+  const settings = data.settings || {};
+  if (settings[hostname]) {
+    delete settings[hostname];
+    await chrome.storage.local.set({ settings });
+  }
+}
+
 // Message handler
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "isMonitored") {
+    normalizeHost(message.hostname).then((site) => {
+      sendResponse({ monitored: !!site });
+    });
+    return true;
+  }
+
   if (message.type === "tick") {
-    const site = normalizeHost(message.hostname);
-    if (!site) {
-      sendResponse({ ok: false });
-      return true;
-    }
-    isMasterEnabled().then((enabled) => {
-      if (!enabled) {
-        sendResponse({ ok: true, skipped: true });
+    normalizeHost(message.hostname).then((site) => {
+      if (!site) {
+        sendResponse({ ok: false });
         return;
       }
-      const tabId = sender.tab ? sender.tab.id : null;
-      addUsageSeconds(site, 5).then(() => {
-        if (tabId !== null) {
-          checkAndBlock(site, tabId).then(() => sendResponse({ ok: true }));
-        } else {
-          sendResponse({ ok: true });
+      isMasterEnabled().then((enabled) => {
+        if (!enabled) {
+          sendResponse({ ok: true, skipped: true });
+          return;
         }
+        const tabId = sender.tab ? sender.tab.id : null;
+        addUsageSeconds(site, 5).then(() => {
+          if (tabId !== null) {
+            checkAndBlock(site, tabId).then(() => sendResponse({ ok: true }));
+          } else {
+            sendResponse({ ok: true });
+          }
+        });
       });
     });
-    return true; // async
+    return true;
   }
 
   if (message.type === "getMasterEnabled") {
@@ -165,11 +209,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   if (message.type === "getStatus") {
-    Promise.all([getSettings(), getUsage(), getBypass()]).then(
-      async ([settings, usage, bypass]) => {
+    Promise.all([getSettings(), getUsage(), getBypass(), getAllSites()]).then(
+      async ([settings, usage, bypass, allSites]) => {
         const todayKey = getTodayKey();
         const result = {};
-        for (const site of SITES) {
+        for (const site of allSites) {
           const siteSetting = settings[site] || { limitMinutes: 20, enabled: true };
           const usedSeconds = (usage[todayKey] && usage[todayKey][site]) || 0;
           const bypassActive = await isBypassActive(site);
@@ -222,6 +266,23 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     chrome.storage.local.set({ confirmEnabled: message.enabled }).then(() =>
       sendResponse({ ok: true })
     );
+    return true;
+  }
+
+  if (message.type === "getCustomSites") {
+    getCustomSites().then((sites) => sendResponse(sites));
+    return true;
+  }
+
+  if (message.type === "addCustomSite") {
+    addCustomSite(message.hostname, message.limitMinutes).then(() =>
+      sendResponse({ ok: true })
+    );
+    return true;
+  }
+
+  if (message.type === "removeCustomSite") {
+    removeCustomSite(message.hostname).then(() => sendResponse({ ok: true }));
     return true;
   }
 });
