@@ -129,12 +129,55 @@ async function checkAndBlock(site, tabId) {
   }
 }
 
+function customScriptId(hostname) {
+  return `pg-custom-${hostname}`;
+}
+
+function customScriptOrigins(hostname) {
+  return [`*://*.${hostname}/*`, `*://${hostname}/*`];
+}
+
+async function registerCustomScript(hostname) {
+  const id = customScriptId(hostname);
+  const matches = customScriptOrigins(hostname);
+  try {
+    await chrome.scripting.registerContentScripts([{
+      id, matches, js: ["content.js"], runAt: "document_start"
+    }]);
+  } catch (e) {
+    // Already registered — update to ensure it's current
+    try {
+      await chrome.scripting.updateContentScripts([{
+        id, matches, js: ["content.js"], runAt: "document_start"
+      }]);
+    } catch (_) { /* ignore */ }
+  }
+}
+
+async function unregisterCustomScript(hostname) {
+  try {
+    await chrome.scripting.unregisterContentScripts({ ids: [customScriptId(hostname)] });
+  } catch (_) { /* already gone */ }
+}
+
+// Re-register all custom site scripts on install/update/startup
+async function reRegisterCustomScripts() {
+  const customSites = await getCustomSites();
+  for (const hostname of customSites) {
+    await registerCustomScript(hostname);
+  }
+}
+
+chrome.runtime.onInstalled.addListener(reRegisterCustomScripts);
+chrome.runtime.onStartup.addListener(reRegisterCustomScripts);
+
 async function addCustomSite(hostname, limitMinutes) {
   const customSites = await getCustomSites();
   if (!customSites.includes(hostname)) {
     customSites.push(hostname);
     await chrome.storage.local.set({ customSites });
   }
+  await registerCustomScript(hostname);
   const settings = await getSettings();
   if (!settings[hostname]) {
     settings[hostname] = { limitMinutes: limitMinutes || 20, enabled: true };
@@ -149,6 +192,11 @@ async function removeCustomSite(hostname) {
     customSites.splice(idx, 1);
     await chrome.storage.local.set({ customSites });
   }
+  await unregisterCustomScript(hostname);
+  // Revoke the optional host permission for this site
+  try {
+    await chrome.permissions.remove({ origins: customScriptOrigins(hostname) });
+  } catch (_) { /* ignore */ }
   const data = await chrome.storage.local.get("settings");
   const settings = data.settings || {};
   if (settings[hostname]) {
