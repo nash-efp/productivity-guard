@@ -115,9 +115,10 @@
 
       const masterEnabled = res.masterEnabled;
       const confirmEnabled = res.confirmEnabled;
+      const pausedToday = res.pausedToday;
       const alreadyConfirmed = sessionStorage.getItem(sessionKey) === "1";
 
-      if (!masterEnabled || !confirmEnabled || alreadyConfirmed) {
+      if (!masterEnabled || !confirmEnabled || pausedToday || alreadyConfirmed) {
         startTicking();
         return;
       }

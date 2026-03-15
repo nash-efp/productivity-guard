@@ -227,6 +227,47 @@ body.extension-off .section {
   margin-left: 8px;
 }
 
+/* Confirm pause today */
+.pause-today-btn {
+  padding: 2px 8px;
+  background: transparent;
+  border: 1px solid #4a5568;
+  border-radius: 4px;
+  color: #a0a8c0;
+  font-size: 11px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.pause-today-btn:hover {
+  border-color: #ffc107;
+  color: #ffc107;
+}
+
+.paused-today-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #ffc107;
+  margin-bottom: 6px;
+}
+
+.clear-pause-btn {
+  padding: 1px 7px;
+  background: transparent;
+  border: 1px solid #ffc107;
+  border-radius: 4px;
+  color: #ffc107;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.clear-pause-btn:hover {
+  background: #ffc107;
+  color: #1a1a2e;
+}
+
 /* Custom site management */
 .add-site-section .section-title {
   font-size: 12px;

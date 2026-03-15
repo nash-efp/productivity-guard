@@ -252,11 +252,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "getConfirmSettings") {
     Promise.all([
       chrome.storage.local.get("masterEnabled"),
-      chrome.storage.local.get("confirmEnabled")
-    ]).then(([m, c]) => {
+      chrome.storage.local.get("confirmEnabled"),
+      chrome.storage.local.get("confirmPausedUntil")
+    ]).then(([m, c, p]) => {
+      const pausedUntil = p.confirmPausedUntil || 0;
+      const pausedToday = Date.now() < pausedUntil;
       sendResponse({
         masterEnabled: m.masterEnabled !== false,
-        confirmEnabled: c.confirmEnabled !== false // default: true
+        confirmEnabled: c.confirmEnabled !== false, // default: true
+        pausedToday
       });
     });
     return true;
@@ -264,6 +268,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   if (message.type === "setConfirmEnabled") {
     chrome.storage.local.set({ confirmEnabled: message.enabled }).then(() =>
+      sendResponse({ ok: true })
+    );
+    return true;
+  }
+
+  if (message.type === "pauseConfirmToday") {
+    const now = new Date();
+    const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
+    chrome.storage.local.set({ confirmPausedUntil: endOfDay }).then(() =>
+      sendResponse({ ok: true })
+    );
+    return true;
+  }
+
+  if (message.type === "clearConfirmPause") {
+    chrome.storage.local.remove("confirmPausedUntil").then(() =>
       sendResponse({ ok: true })
     );
     return true;
