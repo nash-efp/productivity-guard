@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "Productivity Guard",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "YouTube・Twitterの利用時間を制限するChrome拡張機能",
-  "permissions": ["storage", "alarms", "tabs"],
+  "permissions": ["storage", "tabs"],
   "host_permissions": [
     "<all_urls>"
   ],

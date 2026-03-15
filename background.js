@@ -209,8 +209,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   if (message.type === "getStatus") {
-    Promise.all([getSettings(), getUsage(), getBypass(), getAllSites()]).then(
-      async ([settings, usage, bypass, allSites]) => {
+    Promise.all([getSettings(), getUsage(), getAllSites()]).then(
+      async ([settings, usage, allSites]) => {
         const todayKey = getTodayKey();
         const result = {};
         for (const site of allSites) {
