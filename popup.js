@@ -132,6 +132,7 @@ function loadAll() {
   chrome.runtime.sendMessage({ type: "getConfirmSettings" }, (res) => {
     if (!res) return;
     document.getElementById("confirm-enabled").checked = res.confirmEnabled;
+    updateConfirmUI(res.confirmEnabled, res.pausedToday);
   });
 
   chrome.runtime.sendMessage({ type: "getCustomSites" }, (sites) => {
@@ -152,6 +153,41 @@ masterToggle.addEventListener("change", () => {
   const enabled = masterToggle.checked;
   document.body.classList.toggle("extension-off", !enabled);
   chrome.runtime.sendMessage({ type: "setMasterEnabled", enabled });
+});
+
+// Confirm pause UI
+function updateConfirmUI(confirmEnabled, pausedToday) {
+  const pauseTodayBtn = document.getElementById("pause-today-btn");
+  const pausedBar = document.getElementById("paused-today-bar");
+
+  if (confirmEnabled && !pausedToday) {
+    pauseTodayBtn.style.display = "inline-block";
+    pausedBar.style.display = "none";
+  } else if (confirmEnabled && pausedToday) {
+    pauseTodayBtn.style.display = "none";
+    pausedBar.style.display = "flex";
+  } else {
+    // confirm is off entirely
+    pauseTodayBtn.style.display = "none";
+    pausedBar.style.display = "none";
+  }
+}
+
+document.getElementById("confirm-enabled").addEventListener("change", (e) => {
+  const enabled = e.target.checked;
+  updateConfirmUI(enabled, false);
+});
+
+document.getElementById("pause-today-btn").addEventListener("click", () => {
+  chrome.runtime.sendMessage({ type: "pauseConfirmToday" }, () => {
+    updateConfirmUI(true, true);
+  });
+});
+
+document.getElementById("clear-pause-btn").addEventListener("click", () => {
+  chrome.runtime.sendMessage({ type: "clearConfirmPause" }, () => {
+    updateConfirmUI(true, false);
+  });
 });
 
 // Save settings
