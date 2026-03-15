@@ -3,7 +3,7 @@
   "name": "Productivity Guard",
   "version": "1.0.0",
   "description": "YouTube・Twitterの利用時間を制限するChrome拡張機能",
-  "permissions": ["storage", "tabs", "scripting"],
+  "permissions": ["storage", "alarms", "tabs", "scripting"],
   "host_permissions": [
     "*://*.youtube.com/*",
     "*://*.twitter.com/*",
