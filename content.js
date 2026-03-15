@@ -101,7 +101,7 @@
         position: "fixed",
         inset: "0",
         zIndex: "2147483647",
-        background: "#1a1a2e",
+        background: "#000000",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -111,29 +111,29 @@
 
       overlay.innerHTML = `
         <div style="text-align:center;max-width:380px;padding:0 24px;">
-          <div style="font-size:48px;margin-bottom:16px;">⏱️</div>
-          <h2 style="color:#e94560;font-size:22px;margin-bottom:8px;">本当に開きますか？</h2>
-          <p style="color:#a0a8c0;font-size:14px;line-height:1.6;margin-bottom:28px;">
-            <strong style="color:#e0e0e0;">${siteName}</strong> を開こうとしています。<br>
+          <div style="font-size:48px;margin-bottom:16px;filter:grayscale(1);">⏱️</div>
+          <h2 style="color:#ffffff;font-size:22px;margin-bottom:8px;">本当に開きますか？</h2>
+          <p style="color:#999999;font-size:14px;line-height:1.6;margin-bottom:28px;">
+            <strong style="color:#cccccc;">${siteName}</strong> を開こうとしています。<br>
             意識的な選択ですか？
           </p>
           <div style="display:flex;gap:12px;justify-content:center;">
             <button id="pg-cancel" style="
               padding:10px 28px;
-              background:#16213e;
-              border:1px solid #4a5568;
+              background:#1a1a1a;
+              border:1px solid #555555;
               border-radius:8px;
-              color:#e0e0e0;
+              color:#cccccc;
               font-size:14px;
               font-weight:600;
               cursor:pointer;
             ">← 戻る</button>
             <button id="pg-confirm" style="
               padding:10px 28px;
-              background:#e94560;
+              background:#ffffff;
               border:none;
               border-radius:8px;
-              color:white;
+              color:#000000;
               font-size:14px;
               font-weight:600;
               cursor:pointer;
