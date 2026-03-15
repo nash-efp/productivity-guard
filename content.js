@@ -13,8 +13,79 @@
   });
 
   function initSite() {
-    // Confirmation overlay: shown once per session per site
     const sessionKey = `pg_confirmed_${hostname}`;
+
+    // ── Media blocking ────────────────────────────────────────────────────────
+    // Block the page immediately; unblock only after the user confirms (or if
+    // confirmation is not required).
+
+    let mediaObserver = null;
+
+    function blockPageContent() {
+      // 1. Hide all page content visually while keeping our overlay visible.
+      const style = document.createElement("style");
+      style.id = "pg-block-style";
+      style.textContent =
+        "html { visibility: hidden !important; }" +
+        "#pg-overlay, #pg-overlay * { visibility: visible !important; }";
+      document.documentElement.appendChild(style);
+
+      // 2. Override HTMLMediaElement.prototype.play in the *page* context so
+      //    autoplay calls are swallowed while the overlay is showing.
+      const script = document.createElement("script");
+      script.textContent = `
+        window.__pgBlocking = true;
+        (function () {
+          var orig = HTMLMediaElement.prototype.play;
+          HTMLMediaElement.prototype.play = function () {
+            if (window.__pgBlocking) return new Promise(function () {});
+            return orig.apply(this, arguments);
+          };
+        })();
+      `;
+      document.documentElement.appendChild(script);
+      script.remove(); // tag can be removed after execution
+
+      // 3. MutationObserver: pause any media element added while blocking.
+      mediaObserver = new MutationObserver(function () {
+        document.querySelectorAll("video, audio").forEach(function (el) {
+          if (!el.paused) el.pause();
+          el.muted = true;
+        });
+      });
+      mediaObserver.observe(document.documentElement, {
+        childList: true,
+        subtree: true,
+      });
+    }
+
+    function unblockPageContent() {
+      // Stop observing.
+      if (mediaObserver) {
+        mediaObserver.disconnect();
+        mediaObserver = null;
+      }
+
+      // Remove the visibility-hiding style.
+      const style = document.getElementById("pg-block-style");
+      if (style) style.remove();
+
+      // Restore HTMLMediaElement.prototype.play in the page context.
+      const script = document.createElement("script");
+      script.textContent = "window.__pgBlocking = false;";
+      document.documentElement.appendChild(script);
+      script.remove();
+
+      // Unmute any media elements that were muted by the observer.
+      document.querySelectorAll("video, audio").forEach(function (el) {
+        el.muted = false;
+      });
+    }
+
+    // Block the page as early as possible.
+    blockPageContent();
+
+    // ── Confirmation overlay ──────────────────────────────────────────────────
 
     function showConfirmation(siteName, onConfirm, onCancel) {
       const overlay = document.createElement("div");
@@ -87,6 +158,8 @@
       inject();
     }
 
+    // ── Tick / usage tracking ─────────────────────────────────────────────────
+
     function startTicking() {
       function sendTick() {
         if (document.visibilityState !== "visible") return;
@@ -106,9 +179,11 @@
       });
     }
 
-    // Check settings, then decide whether to show confirmation
+    // ── Decision logic ────────────────────────────────────────────────────────
+
     chrome.runtime.sendMessage({ type: "getConfirmSettings" }, (res) => {
       if (chrome.runtime.lastError || !res) {
+        unblockPageContent();
         startTicking();
         return;
       }
@@ -119,6 +194,8 @@
       const alreadyConfirmed = sessionStorage.getItem(sessionKey) === "1";
 
       if (!masterEnabled || !confirmEnabled || pausedToday || alreadyConfirmed) {
+        // No confirmation needed — unblock immediately.
+        unblockPageContent();
         startTicking();
         return;
       }
@@ -126,17 +203,20 @@
       const siteNames = {
         "youtube.com": "YouTube",
         "twitter.com": "Twitter / X",
-        "x.com": "Twitter / X"
+        "x.com": "Twitter / X",
       };
       const siteName = siteNames[hostname] || hostname;
 
       showConfirmation(
         siteName,
         () => {
+          // Confirmed → unblock page, start tracking.
+          unblockPageContent();
           sessionStorage.setItem(sessionKey, "1");
           startTicking();
         },
         () => {
+          // Cancelled → navigate away (page stays hidden, no need to unblock).
           if (history.length > 1) {
             history.back();
           } else {
