@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="280" viewBox="0 0 440 280">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f1b35;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a1a2e;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="barGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#e94560;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#c73652;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="barGreen" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4caf50;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#388e3c;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="barOrange" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ff9800;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e65100;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="440" height="280" fill="url(#bgGrad)" rx="0"/>
+
+  <!-- Subtle grid lines -->
+  <line x1="0" y1="70" x2="440" y2="70" stroke="#ffffff" stroke-opacity="0.03" stroke-width="1"/>
+  <line x1="0" y1="140" x2="440" y2="140" stroke="#ffffff" stroke-opacity="0.03" stroke-width="1"/>
+  <line x1="0" y1="210" x2="440" y2="210" stroke="#ffffff" stroke-opacity="0.03" stroke-width="1"/>
+  <line x1="110" y1="0" x2="110" y2="280" stroke="#ffffff" stroke-opacity="0.03" stroke-width="1"/>
+  <line x1="220" y1="0" x2="220" y2="280" stroke="#ffffff" stroke-opacity="0.03" stroke-width="1"/>
+  <line x1="330" y1="0" x2="330" y2="280" stroke="#ffffff" stroke-opacity="0.03" stroke-width="1"/>
+
+  <!-- Accent glow top-left -->
+  <circle cx="-20" cy="-20" r="120" fill="#e94560" fill-opacity="0.06"/>
+  <!-- Accent glow bottom-right -->
+  <circle cx="460" cy="300" r="140" fill="#0f3460" fill-opacity="0.4"/>
+
+  <!-- Icon area (left side) -->
+  <!-- Clock icon circle -->
+  <circle cx="72" cy="108" r="36" fill="#16213e" stroke="#e94560" stroke-width="2" filter="url(#shadow)"/>
+  <circle cx="72" cy="108" r="30" fill="none" stroke="#0f3460" stroke-width="1"/>
+  <!-- Clock hands -->
+  <line x1="72" y1="108" x2="72" y2="86" stroke="#e94560" stroke-width="2.5" stroke-linecap="round" filter="url(#glow)"/>
+  <line x1="72" y1="108" x2="88" y2="116" stroke="#a0a8c0" stroke-width="2" stroke-linecap="round"/>
+  <!-- Clock center dot -->
+  <circle cx="72" cy="108" r="3" fill="#e94560"/>
+  <!-- Clock tick marks -->
+  <line x1="72" y1="76" x2="72" y2="80" stroke="#4a5568" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="72" y1="136" x2="72" y2="140" stroke="#4a5568" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="36" y1="108" x2="40" y2="108" stroke="#4a5568" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="104" y1="108" x2="108" y2="108" stroke="#4a5568" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- Lock icon below clock -->
+  <rect x="56" y="166" width="32" height="22" rx="3" fill="#16213e" stroke="#4caf50" stroke-width="1.5"/>
+  <path d="M63 166 v-6 a9 9 0 0 1 18 0 v6" fill="none" stroke="#4caf50" stroke-width="1.5" stroke-linecap="round"/>
+  <circle cx="72" cy="177" r="3" fill="#4caf50"/>
+
+  <!-- Right side: main content -->
+  <!-- App name -->
+  <text x="126" y="52" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="22" font-weight="700" fill="#ffffff" letter-spacing="-0.3">Productivity Guard</text>
+  <!-- Tagline -->
+  <text x="126" y="72" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" fill="#a0a8c0" letter-spacing="0.3">SNS・動画サイトの時間を賢く管理</text>
+
+  <!-- Divider -->
+  <line x1="126" y1="84" x2="420" y2="84" stroke="#0f3460" stroke-width="1"/>
+
+  <!-- Feature cards row -->
+  <!-- Card 1: 時間制限 -->
+  <rect x="126" y="94" width="88" height="64" rx="6" fill="#16213e" stroke="#0f3460" stroke-width="1"/>
+  <text x="170" y="114" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="18" text-anchor="middle" fill="#e94560">⏱</text>
+  <text x="170" y="132" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" font-weight="600" text-anchor="middle" fill="#e0e0e0">時間制限</text>
+  <text x="170" y="148" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="9" text-anchor="middle" fill="#8090b0">上限を超えたら</text>
+  <text x="170" y="158" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="9" text-anchor="middle" fill="#8090b0">自動ブロック</text>
+
+  <!-- Card 2: カスタムサイト -->
+  <rect x="222" y="94" width="88" height="64" rx="6" fill="#16213e" stroke="#0f3460" stroke-width="1"/>
+  <text x="266" y="114" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="18" text-anchor="middle" fill="#4caf50">＋</text>
+  <text x="266" y="132" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" font-weight="600" text-anchor="middle" fill="#e0e0e0">サイト追加</text>
+  <text x="266" y="148" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="9" text-anchor="middle" fill="#8090b0">任意の URL を</text>
+  <text x="266" y="158" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="9" text-anchor="middle" fill="#8090b0">登録・削除</text>
+
+  <!-- Card 3: 統計 -->
+  <rect x="318" y="94" width="88" height="64" rx="6" fill="#16213e" stroke="#0f3460" stroke-width="1"/>
+  <text x="362" y="114" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="18" text-anchor="middle" fill="#ffc107">📊</text>
+  <text x="362" y="132" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" font-weight="600" text-anchor="middle" fill="#e0e0e0">統計グラフ</text>
+  <text x="362" y="148" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="9" text-anchor="middle" fill="#8090b0">過去30日間の</text>
+  <text x="362" y="158" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="9" text-anchor="middle" fill="#8090b0">利用時間を可視化</text>
+
+  <!-- Progress bars section -->
+  <text x="126" y="180" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" font-weight="600" fill="#a0a8c0" letter-spacing="0.5">TODAY'S USAGE</text>
+
+  <!-- YouTube bar -->
+  <text x="126" y="198" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" fill="#c0c8e0">YouTube</text>
+  <text x="406" y="198" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" text-anchor="end" fill="#e94560">18m / 20m</text>
+  <rect x="126" y="202" width="280" height="7" rx="3.5" fill="#0f3460"/>
+  <rect x="126" y="202" width="252" height="7" rx="3.5" fill="url(#barGrad)"/>
+
+  <!-- Twitter bar -->
+  <text x="126" y="222" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" fill="#c0c8e0">Twitter / X</text>
+  <text x="406" y="222" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" text-anchor="end" fill="#4caf50">8m / 20m</text>
+  <rect x="126" y="226" width="280" height="7" rx="3.5" fill="#0f3460"/>
+  <rect x="126" y="226" width="112" height="7" rx="3.5" fill="url(#barGreen)"/>
+
+  <!-- Instagram bar (custom site) -->
+  <text x="126" y="246" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" fill="#c0c8e0">instagram.com</text>
+  <text x="406" y="246" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" text-anchor="end" fill="#ff9800">14m / 15m</text>
+  <rect x="126" y="250" width="280" height="7" rx="3.5" fill="#0f3460"/>
+  <rect x="126" y="250" width="261" height="7" rx="3.5" fill="url(#barOrange)"/>
+
+  <!-- Bottom strip -->
+  <rect x="0" y="268" width="440" height="12" fill="#e94560" fill-opacity="0.15"/>
+  <text x="220" y="278" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="9" text-anchor="middle" fill="#e94560" letter-spacing="1" fill-opacity="0.8">FREE · NO ACCOUNT REQUIRED · ALL DATA STAYS ON YOUR DEVICE</text>
+</svg>
