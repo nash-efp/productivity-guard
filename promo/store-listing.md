@@ -59,10 +59,67 @@ Productivity Guard は、SNS や動画サイトへの時間を使いすぎない
 
 ---
 
-## 英語説明文（短い説明）
+## 英語説明文（短い説明 / 132文字以内）
 
 ```
 Limit your daily time on YouTube, Twitter, and any custom website. Auto-block when you exceed your limit. Custom sites, bypass, and usage stats included.
+```
+
+---
+
+## 英語説明文（詳細）
+
+```
+Productivity Guard helps you take back control of your time by limiting how long you spend on distracting websites each day.
+
+■ Features
+
+[Time Limits & Blocking]
+· YouTube and Twitter/X are monitored by default
+· Set a daily time limit (in minutes) for each site individually
+· When the limit is reached, the tab is automatically redirected to a block page
+· Need a little more time? Use the 5-minute bypass to temporarily unblock a site
+
+[Custom Sites]
+· Add any website by URL — Instagram, Reddit, TikTok, or anything else
+· Custom sites are tracked and blocked just like the built-in ones
+· Remove any site with a single click
+
+[Intentional Browsing Prompt]
+· Shows a full-screen "Are you sure?" overlay before loading a monitored site
+· Encourages conscious, deliberate browsing instead of mindless habit
+· Can be toggled ON/OFF at any time
+· "Skip for today" option pauses the prompt until midnight, then resets automatically
+
+[Usage Statistics]
+· Bar chart showing daily usage for the past 7 or 30 days
+· Limit line overlay makes it easy to see which days you went over
+· Custom sites automatically appear in the stats
+
+■ Privacy
+All data is stored locally on your device only. Nothing is ever sent to an external server.
+
+■ How to use
+1. Click the extension icon to open the popup
+2. Enter a URL in "Site Manager" to add a site you want to track
+3. Set a daily time limit for each site and click Save
+4. The extension handles the rest automatically
+```
+
+---
+
+## 英語タグ（検索キーワード）
+
+```
+time management, productivity, screen time, YouTube limit, Twitter limit, site blocker, focus, distraction blocker, pomodoro
+```
+
+---
+
+## 英語・単一用途の説明（権限申請欄）
+
+```
+Accesses the active tab's URL to measure and limit time spent on user-specified websites. All data is stored in local storage only and is never transmitted externally.
 ```
 
 ---
