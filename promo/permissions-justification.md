@@ -88,6 +88,58 @@ Used to dynamically register a content script for each custom site the user adds
 
 ## ホスト権限の説明
 
+### なぜホスト権限が必要か
+
+**日本語**
+```
+この拡張機能はページを「開いた瞬間」から時間を計測する必要があります。
+そのため、ページの読み込みが始まる最初のタイミング（document_start）で
+コンテンツスクリプトを自動挿入しなければなりません。
+
+Chrome の仕様上、コンテンツスクリプトをページ読み込み時に自動実行するには
+ホスト権限が必須です。代替手段として activeTab 権限がありますが、これは
+ユーザーが拡張機能アイコンをクリックしたときにしか機能せず、ページを開いた
+瞬間の自動実行には使えません。
+
+ホスト権限があることで実現できる処理は以下の2つに限定されています。
+
+1. コンテンツスクリプトの自動挿入
+   → 閲覧時間の計測・確認ダイアログの表示・動画の自動再生ブロック
+
+2. 上限到達時のタブリダイレクト（chrome.tabs.update）
+   → 対象タブをブロック画面に切り替える
+
+ページ内のテキスト・画像・個人情報・入力内容などを読み取ることはなく、
+収集したデータは端末内にのみ保存します。
+```
+
+**英語**
+```
+This extension needs to measure time from the moment a page starts loading.
+To do this, a content script must be injected automatically at document_start —
+the earliest possible point in the page lifecycle.
+
+Under Chrome's security model, automatically injecting a content script at
+page load time requires host permissions. The alternative, activeTab, only
+activates when the user explicitly clicks the extension icon and cannot be
+used for automatic injection on navigation.
+
+Host permissions enable exactly two actions in this extension:
+
+1. Automatic content script injection
+   → Measures time on site, shows the "Are you sure?" confirmation overlay,
+     and blocks video autoplay behind the overlay.
+
+2. Tab redirect when the daily limit is reached (chrome.tabs.update)
+   → Switches the monitored tab to the block page.
+
+The extension does not read page content, text, images, form inputs, or any
+personal information. All collected data (usage time and settings) is stored
+locally on the user's device only.
+```
+
+---
+
 ### 静的ホスト権限（インストール時に要求）
 
 | パターン | 対象サイト | 理由 |
