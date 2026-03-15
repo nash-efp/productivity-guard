@@ -214,7 +214,7 @@ document.getElementById("save-btn").addEventListener("click", () => {
 });
 
 // Add custom site
-document.getElementById("add-site-btn").addEventListener("click", () => {
+document.getElementById("add-site-btn").addEventListener("click", async () => {
   const urlInput = document.getElementById("new-site-url");
   const limitInput = document.getElementById("new-site-limit");
   const errorEl = document.getElementById("add-site-error");
@@ -225,6 +225,19 @@ document.getElementById("add-site-btn").addEventListener("click", () => {
     return;
   }
   errorEl.textContent = "";
+
+  // Request host permission for this site (must be triggered by user gesture)
+  const origins = [`*://*.${hostname}/*`, `*://${hostname}/*`];
+  let granted = false;
+  try {
+    granted = await chrome.permissions.request({ origins });
+  } catch (e) {
+    granted = false;
+  }
+  if (!granted) {
+    errorEl.textContent = "アクセス権限が許可されませんでした";
+    return;
+  }
 
   const limitMinutes = parseInt(limitInput.value, 10) || 20;
   chrome.runtime.sendMessage({ type: "addCustomSite", hostname, limitMinutes }, () => {
