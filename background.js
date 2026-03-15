@@ -168,8 +168,65 @@ async function reRegisterCustomScripts() {
   }
 }
 
-chrome.runtime.onInstalled.addListener(reRegisterCustomScripts);
-chrome.runtime.onStartup.addListener(reRegisterCustomScripts);
+chrome.runtime.onInstalled.addListener(() => {
+  reRegisterCustomScripts();
+  scheduleMidnightAlarm();
+});
+chrome.runtime.onStartup.addListener(() => {
+  reRegisterCustomScripts();
+  scheduleMidnightAlarm();
+});
+
+// ── Midnight alarm ────────────────────────────────────────────────────────────
+// MV3 service workers can be terminated at any time. Using chrome.alarms
+// ensures the background script wakes up at midnight even if it was inactive.
+
+function scheduleMidnightAlarm() {
+  const now = new Date();
+  const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  const delayMs = midnight.getTime() - Date.now();
+  // periodInMinutes = 1440 (24h) keeps it firing every day thereafter
+  chrome.alarms.create("pg-midnight", {
+    delayInMinutes: delayMs / 60000,
+    periodInMinutes: 1440
+  });
+}
+
+chrome.alarms.onAlarm.addListener(async (alarm) => {
+  if (alarm.name !== "pg-midnight") return;
+
+  // 1. Clear expired bypass states
+  const bypass = await getBypass();
+  const now = Date.now();
+  let changed = false;
+  for (const site of Object.keys(bypass)) {
+    const { grantedAt, durationMs } = bypass[site];
+    if (now >= grantedAt + durationMs) {
+      delete bypass[site];
+      changed = true;
+    }
+  }
+  if (changed) await chrome.storage.local.set({ bypass });
+
+  // 2. Clear expired "pause confirm today"
+  const data = await chrome.storage.local.get("confirmPausedUntil");
+  if (data.confirmPausedUntil && now >= data.confirmPausedUntil) {
+    await chrome.storage.local.remove("confirmPausedUntil");
+  }
+
+  // 3. Remove usage data older than KEEP_DAYS
+  const usage = await getUsage();
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - KEEP_DAYS);
+  let usageChanged = false;
+  for (const key of Object.keys(usage)) {
+    if (new Date(key) < cutoff) {
+      delete usage[key];
+      usageChanged = true;
+    }
+  }
+  if (usageChanged) await chrome.storage.local.set({ usage });
+});
 
 async function addCustomSite(hostname, limitMinutes) {
   const customSites = await getCustomSites();

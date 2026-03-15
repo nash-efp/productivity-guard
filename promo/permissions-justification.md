@@ -32,6 +32,32 @@ Used to store daily usage time, per-site limit settings, bypass states, and the 
 
 ---
 
+### `alarms`
+
+**日本語**
+```
+Manifest V3 のサービスワーカーはブラウザによって任意のタイミングで停止されます。chrome.alarms を使用することで、サービスワーカーが停止していても毎日深夜0時に確実にバックグラウンド処理を実行します。具体的には以下の3つの処理を行います。
+
+1. 期限切れのバイパス状態（一時解除）の自動クリア
+2. 「今日だけOFF」設定の自動リセット（日付をまたいだとき）
+3. 30日以上前の利用履歴データの自動削除
+
+これらの処理はユーザーのプライバシー保護とデータ整合性の維持を目的としており、通知の送信や外部通信は一切行いません。
+```
+
+**英語**
+```
+In Manifest V3, service workers can be terminated by the browser at any time. The alarms API ensures that background maintenance tasks run reliably at midnight every day, even if the service worker is inactive. Specifically, the midnight alarm performs three tasks:
+
+1. Automatically clears expired bypass states (temporary unblocks).
+2. Resets the "skip confirmation today" setting when the day rolls over.
+3. Removes usage history data older than 30 days to limit storage usage.
+
+These tasks are purely for data integrity and privacy protection. No notifications are sent and no external communication occurs.
+```
+
+---
+
 ### `tabs`
 
 **日本語**
@@ -72,12 +98,12 @@ Used to dynamically register a content script for each custom site the user adds
 
 **日本語**
 ```
-YouTube・Twitter・X はこの拡張機能のデフォルト監視対象であり、ページ読み込み開始時（document_start）に時間計測スクリプトを挿入するために必要です。これらのサイト上でコンテンツの読み取りや変更は行わず、時間計測とアクセスブロックのみを目的としています。
+YouTube・Twitter・X はこの拡張機能のデフォルト監視対象です。ページ読み込み開始時（document_start）にコンテンツスクリプトを挿入し、閲覧時間の計測と上限到達時のブロック処理を行うために必要です。これらのサイト上でページの内容を読み取ったり変更したりすることはなく、時間計測とタブのリダイレクトのみを目的としています。
 ```
 
 **英語**
 ```
-YouTube, Twitter, and X are the default monitored sites. Host permissions for these domains are required to inject the time-tracking content script at document_start. The extension does not read or modify the content of these pages — it only measures time spent and redirects the tab when the limit is reached.
+YouTube, Twitter, and X are the default monitored sites. Host permissions for these domains are required to inject the time-tracking content script at document_start. The extension does not read or modify the content of these pages — it only measures time spent and redirects the tab to a block page when the limit is reached.
 ```
 
 ---
@@ -86,21 +112,21 @@ YouTube, Twitter, and X are the default monitored sites. Host permissions for th
 
 **日本語**
 ```
-ユーザーがポップアップの「サイト管理」からカスタムサイト（例: instagram.com）を追加するとき、そのサイトへのアクセス許可をその都度リクエストします。<all_urls> はユーザーが任意のサイトを追加できるようにするための宣言であり、インストール時には要求されません。許可はサイトごとに個別に付与・取り消しが行われ、サイトを削除すると権限も自動的に返却されます。
+ユーザーがポップアップの「サイト管理」からカスタムサイト（例: instagram.com）を追加するとき、そのサイトへのアクセス許可をその都度 Chrome のダイアログを通じてリクエストします。
+
+<all_urls> はマニフェストの optional_host_permissions に宣言していますが、インストール時には一切要求されません。ユーザーがサイトを追加する操作をした瞬間にのみ、追加対象の1サイトの権限を個別にリクエストします。サイトを削除すると、そのサイトの権限も自動的に返却されます。
+
+コンテンツスクリプトは chrome.scripting.registerContentScripts() を使って動的に登録されるため、ユーザーが許可したサイトにのみ適用されます。
 ```
 
 **英語**
 ```
-When a user adds a custom site (e.g., instagram.com) via the "Site Manager" in the popup, the extension requests host permission for that specific site at that moment. The <all_urls> optional permission is declared solely to enable users to add arbitrary sites — it is never requested at install time. Permissions are granted and revoked on a per-site basis; removing a site from the list automatically revokes its permission.
+When a user adds a custom site (e.g., instagram.com) via the "Site Manager" in the popup, the extension requests host permission for that specific site through Chrome's native permission dialog.
+
+Although <all_urls> is declared in optional_host_permissions, it is never requested at install time. Permission is requested only at the moment the user clicks "Add", and only for the one site being added. Removing a site from the list automatically revokes its host permission.
+
+Content scripts are registered dynamically via chrome.scripting.registerContentScripts() and apply only to sites the user has explicitly permitted.
 ```
-
----
-
-## 使用していない権限
-
-| 権限 | 説明 |
-|---|---|
-| `alarms` | **使用していません。** この拡張機能はタイマーやアラームを使用せず、コンテンツスクリプト側の `setInterval` で時間を計測しています。マニフェストには含まれていません。 |
 
 ---
 
